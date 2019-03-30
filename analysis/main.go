@@ -98,15 +98,37 @@ func main() {
 	go uvCounter(uvChannel, storageChannel, redisPool)
 
 	// 创建存储器
-	go dataStorage(storageChannel)
-
-	fmt.Printf("ceshi")
+	go dataStorage(storageChannel, redisPool)
 
 	time.Sleep(1000*time.Second)
 }
 
-func dataStorage(storageChannel chan storageBlock)  {
-	
+func dataStorage(storageChannel chan storageBlock, redisPool *pool.Pool)  {
+	for block := range storageChannel {
+		prefix := block.counterType + "_"
+
+		// 逐层添加，加洋葱皮的过程
+		// 维度： 天-小时-分钟
+		// 层级： 定级-大分类-小分类-终极页面
+		// 存储模型： Redis  SortedSet
+		setKeys := []string{
+			prefix+"day_"+getTime(block.unode.unTime, "day"),
+			prefix+"hour_"+getTime(block.unode.unTime, "hour"),
+			prefix+"min_"+getTime(block.unode.unTime, "min"),
+			prefix+block.unode.unType+"_day_"+getTime(block.unode.unTime, "day"),
+			prefix+block.unode.unType+"_hour_"+getTime(block.unode.unTime, "hour"),
+			prefix+block.unode.unType+"_min_"+getTime(block.unode.unTime, "min"),
+		}
+
+		rowId := block.unode.unRid
+
+		for _,key := range setKeys {
+			ret, err := redisPool.Cmd( block.storageModel, key, 1, rowId ).Int()
+			if ret<=0 || err!=nil {
+				fmt.Printf( "DataStorage redis storage error.", block.storageModel, key, rowId )
+			}
+		}
+	}
 }
 
 func pvCounter(pvChannel chan urlData, storageChannel chan storageBlock)  {
@@ -168,7 +190,7 @@ func readFileLineByLine(params cmdParams, logChannel chan string) error {
 		if err != nil {
 			if err == io.EOF {
 				time.Sleep(3*time.Second)
-				fmt.Printf("no file")
+				fmt.Printf("no file\n")
 			}else{
 				fmt.Printf("file ReadString error")
 				return err
@@ -214,7 +236,7 @@ func cutLogFetchData(log string) digData {
 
 func formatUrl(url, t string) urlNode {
 	pos1 := str.IndexOf( url, HANDLE_MOVIE, 0)
-	if pos1!=-1 {
+	if pos1 != -1 {
 		pos1 += len( HANDLE_MOVIE )
 		pos2 := str.IndexOf( url, HANDLE_HTML, 0 )
 		idStr := str.Substr( url , pos1, pos2-pos1 )
@@ -222,11 +244,11 @@ func formatUrl(url, t string) urlNode {
 		return urlNode{ "movie", id, url, t }
 	} else {
 		pos1 = str.IndexOf( url, HANDLE_LIST, 0 )
-		if pos1!=-1 {
+		if pos1 != -1 {
 			pos1 += len( HANDLE_LIST )
 			pos2 := str.IndexOf( url, HANDLE_HTML, 0 )
 			idStr := str.Substr( url , pos1, pos2-pos1 )
-			id, _ := strconv.Atoi( idStr )
+			id, _  := strconv.Atoi( idStr )
 			return urlNode{ "list", id, url, t }
 		} else {
 			return urlNode{ "home", 1, url, t}
