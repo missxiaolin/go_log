@@ -6,8 +6,12 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"time"
+	"github.com/mgutz/str"
 )
+
+const HANDLE_DIG  = " /dig?"
 
 type cmdParams struct {
 	logFilePath string
@@ -37,12 +41,10 @@ type storageBlock struct {
 }
 
 func init()  {
-
 }
 
 // 获取参数->打日志->初始化channel->日志消费->创建一组日志处理->创建pv uv->创建存储器
 func main() {
-
 	logFilePath := flag.String("filePath", "/Users/web/go/log/miss-log.log", "log file path ")
 	routineNum := flag.Int("routineNum", 5, "consumer number by goroutine")
 	//l := flag.String("l", "/Users/web/go/log", "this is go log file path")
@@ -89,8 +91,13 @@ func uvCounter(pvChannel chan urlData, storageChannel chan storageBlock)  {
 
 }
 
-func logConsumer(logChannel chan string, pvChannel chan urlData, uvChannel chan urlData)  {
+func logConsumer(logChannel chan string, pvChannel chan urlData, uvChannel chan urlData) error {
+	for logStr := range logChannel {
+		// 切割日志
+		data := cutLogFetchData(logStr)
+	}
 
+	return nil
 }
 
 func readFileLineByLine(params cmdParams, logChannel chan string) error {
@@ -123,4 +130,11 @@ func readFileLineByLine(params cmdParams, logChannel chan string) error {
 		}
 	}
 	return nil
+}
+
+func cutLogFetchData(log string) digData {
+	log = strings.TrimSpace(log)
+	//str.In
+
+
 }
