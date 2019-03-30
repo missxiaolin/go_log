@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	"io"
+	"os"
 	"time"
 )
 
@@ -90,6 +93,34 @@ func logConsumer(logChannel chan string, pvChannel chan urlData, uvChannel chan 
 
 }
 
-func readFileLineByLine(params cmdParams, logChannel chan string)  {
-	
+func readFileLineByLine(params cmdParams, logChannel chan string) error {
+	fd, err := os.Open(params.logFilePath)
+	if err != nil {
+		fmt.Printf("file open error")
+		return err
+	}
+	defer fd.Close()
+
+	count := 0
+	bufferRead := bufio.NewReader(fd)
+	for  {
+		line, err := bufferRead.ReadString('\n')
+		if err != nil {
+			if err == io.EOF {
+				time.Sleep(3*time.Second)
+				fmt.Printf("no file")
+			}else{
+				fmt.Printf("file ReadString error")
+				return err
+			}
+
+		}
+		logChannel <- line
+		count++
+
+		if count%(1000*params.routineNum) == 0 {
+			fmt.Printf("file read 10000")
+		}
+	}
+	return nil
 }
