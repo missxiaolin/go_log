@@ -6,6 +6,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	defs2 "go_log/collect_log/defs"
 	"go_log/collect_log/response"
+	"go_log/collect_log/util"
 	"io/ioutil"
 	"net/http"
 
@@ -18,5 +19,6 @@ func AddLog(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		response.ApiErrorResponse(w, defs2.ErrorRequestBodyParseFailed)
 		return
 	}
+	ubody.Ip = util.RemoteIp(r)
 	fmt.Println(ubody)
 }
