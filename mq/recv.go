@@ -1,7 +1,10 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/streadway/amqp"
+	"go_log/mq/defs"
 	"log"
 )
 
@@ -45,7 +48,12 @@ func main() {
 
 	go func() {
 		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
+			var person defs.Data
+			data := d.Body
+			json.Unmarshal([]byte(data), &person)
+
+			fmt.Println("json : ", person)
+			//log.Printf("Received a message: %s", d.Body)
 		}
 	}()
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")

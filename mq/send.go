@@ -1,10 +1,18 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/streadway/amqp"
+	"go_log/mq/defs"
 	"log"
 )
+
+type SliceMock struct {
+	addr uintptr
+	len int
+	cap int
+}
 
 func failOnError(err error, msg string) {
 	if err != nil {
@@ -32,9 +40,10 @@ func main() {
 
 	failOnError(err, "Failed to declare a queue")
 
-	body := "Hello World!"
-
-	fmt.Println([]byte(body))
+	//body := "Hello World!"
+	testStruct := defs.Data{"127.0.0.1","xiaolin"}
+	body, err := json.Marshal(testStruct)
+	fmt.Println(body)
 
 	err = ch.Publish(
 		"",     // exchange
