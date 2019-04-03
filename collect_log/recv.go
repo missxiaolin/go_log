@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"go_log/collect_log/dbops"
 	"go_log/collect_log/defs"
 	"go_log/collect_log/util"
 	"time"
@@ -9,7 +11,15 @@ import (
 
 func callback(d util.MSG) {
 	fmt.Println("Ok")
-	fmt.Println(string(d.Body))
+	var ubody defs.Log
+	data := d.Body
+	json.Unmarshal([]byte(data), &ubody)
+	fmt.Println(ubody)
+	if err := dbops.AddLog(&ubody); err != nil {
+		return
+	}
+
+
 }
 
 func errCallback(d util.MSG) {
