@@ -26,8 +26,13 @@ func AddLog(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	//	return
 	//}
 
+	body, err := json.Marshal(ubody)
+	if err != nil {
+		fmt.Println("json 解析错误")
+	}
+
 	// mq 推送
-	if err := util.Push("myPusher", "myQueue", []byte("Hello world!")); err != nil {
+	if err := util.Push("myPusher", "myQueue", []byte(body)); err != nil {
 		fmt.Println(err)
 	}
 
