@@ -2,6 +2,7 @@ package handles
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"go_log/collect_log/defs"
 	"go_log/collect_log/response"
@@ -24,7 +25,15 @@ func AddLog(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	//	response.ApiErrorResponse(w, defs.ErrorDBError)
 	//	return
 	//}
+
 	// mq 推送
+	if err := util.Push("myPusher", "myQueue", []byte("Hello world!")); err != nil {
+		fmt.Println(err)
+	}
+
+	if err := util.Fini(); err != nil {
+		fmt.Println(err)
+	}
 
 	response.ApiNormalResponse(w, "success", 201)
 }
