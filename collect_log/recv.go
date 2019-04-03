@@ -29,7 +29,13 @@ func errCallback(d util.MSG) {
 
 func dlxCallback(d util.MSG) {
 	fmt.Println("Dlx")
-	fmt.Println(string(d.Body))
+	var ubody defs.Log
+	data := d.Body
+	json.Unmarshal([]byte(data), &ubody)
+	fmt.Println(ubody)
+	if err := dbops.AddLog(&ubody); err != nil {
+		return
+	}
 }
 
 func main() {
