@@ -3,7 +3,6 @@ package handles
 import (
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
-	"go_log/collect_log/dbops"
 	"go_log/collect_log/defs"
 	"go_log/collect_log/response"
 	"go_log/collect_log/util"
@@ -21,9 +20,11 @@ func AddLog(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	ubody.Ip = util.RemoteIp(r)
 
 	// 记录到数据库
-	if err := dbops.AddLog(ubody); err != nil {
-		response.ApiErrorResponse(w, defs.ErrorDBError)
-		return
-	}
+	//if err := dbops.AddLog(ubody); err != nil {
+	//	response.ApiErrorResponse(w, defs.ErrorDBError)
+	//	return
+	//}
+	// mq 推送
+
 	response.ApiNormalResponse(w, "success", 201)
 }

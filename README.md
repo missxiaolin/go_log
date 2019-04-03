@@ -34,4 +34,5 @@ log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
 
 ~~~
 go get github.com/sirupsen/logrus
+go get github.com/streadway/amqp
 ~~~
