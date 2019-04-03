@@ -36,9 +36,9 @@ func AddLog(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		fmt.Println(err)
 	}
 
-	if err := util.Fini(); err != nil {
-		fmt.Println(err)
-	}
+	//if err := util.Fini(); err != nil {
+	//	fmt.Println(err)
+	//}
 
 	response.ApiNormalResponse(w, "success", 201)
 }
