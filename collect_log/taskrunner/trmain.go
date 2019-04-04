@@ -24,11 +24,11 @@ func Start()  {
 }
 
 func callback1(d util.MSG) {
-	fmt.Println("Ok")
+	//fmt.Println("Ok")
 	var ubody defs.Log
 	data := d.Body
 	json.Unmarshal([]byte(data), &ubody)
-	fmt.Println(ubody)
+	//fmt.Println(ubody)
 	if err := dbops.AddLog(&ubody); err != nil {
 		return
 	}
@@ -42,9 +42,9 @@ func errCallback1(d util.MSG) {
 }
 
 func dlxCallback1(d util.MSG) {
-	fmt.Println("Dlx")
+	//fmt.Println("Dlx")
 	var ubody defs.Log
-	data := d.Body
+	//data := d.Body
 	json.Unmarshal([]byte(data), &ubody)
 	fmt.Println(ubody)
 	if err := dbops.AddLog(&ubody); err != nil {
