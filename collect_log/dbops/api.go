@@ -12,7 +12,7 @@ func AddLog(log *defs.Log) error  {
 		return err
 	}
 
-	_, err = stmtIns.Exec(log.Url, log.UrlId, log.Type, log.Type)
+	_, err = stmtIns.Exec(log.Url, log.UrlId, log.Type, log.Ip)
 	if err != nil {
 		return err
 	}

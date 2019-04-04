@@ -5,6 +5,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"go_log/collect_log/defs"
 	"go_log/collect_log/handles"
+	"go_log/collect_log/taskrunner"
 	"go_log/collect_log/util"
 	"net/http"
 )
@@ -21,6 +22,8 @@ func main() {
 	if err := util.Init(defs.CONFIG_PATH + "./rmq.json"); err != nil {
 		fmt.Println(err)
 	}
+
+	go taskrunner.Start()
 
 	r := RegisterHandlers()
 	http.ListenAndServe(":9001", r)

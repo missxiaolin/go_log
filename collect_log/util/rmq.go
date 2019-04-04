@@ -471,4 +471,3 @@ func Pop(name string, callback func(MSG)) (err error) {
 
 	return nil
 }
-
