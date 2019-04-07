@@ -44,7 +44,7 @@ func errCallback1(d util.MSG) {
 func dlxCallback1(d util.MSG) {
 	//fmt.Println("Dlx")
 	var ubody defs.Log
-	//data := d.Body
+	data := d.Body
 	json.Unmarshal([]byte(data), &ubody)
 	fmt.Println(ubody)
 	if err := dbops.AddLog(&ubody); err != nil {
