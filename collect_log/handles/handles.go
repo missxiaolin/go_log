@@ -26,19 +26,23 @@ func AddLog(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	//	return
 	//}
 
-	body, err := json.Marshal(ubody)
-	if err != nil {
-		fmt.Println("json 解析错误")
-	}
 
-	// mq 推送
-	if err := util.Push("myPusher", "myQueue", []byte(body)); err != nil {
-		fmt.Println(err)
-	}
+
+
+	go func(body interface{}) {
+		data, err := json.Marshal(ubody)
+		if err != nil {
+			fmt.Println("json 解析错误")
+		}
+		// mq 推送
+		if err := util.Push("myPusher", "myQueue", []byte(data)); err != nil {
+			fmt.Println(err)
+		}
+	}(ubody)
 
 	//if err := util.Fini(); err != nil {
 	//	fmt.Println(err)
 	//}
 
-	response.ApiNormalResponse(w, "success", 201)
+	response.ApiNormalResponse(w, "success", 200)
 }
